@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img">
+  <style>
+    .disc { fill: #191813 }
+    .rule { stroke: #ffffff }
+    @media (prefers-color-scheme: dark) {
+      .disc { fill: #f3f1ea }
+      .rule { stroke: #121210 }
+    }
+  </style>
+  <defs>
+    <clipPath id="disc"><circle cx="32" cy="32" r="30"/></clipPath>
+  </defs>
+  <circle class="disc" cx="32" cy="32" r="30"/>
+  <path class="rule" d="M0 22h20v12a12 12 0 0 0 24 0V22h20"
+        fill="none" stroke-width="4.5"
+        stroke-linejoin="round" clip-path="url(#disc)"/>
+</svg>

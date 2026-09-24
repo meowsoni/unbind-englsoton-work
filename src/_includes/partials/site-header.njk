@@ -1,0 +1,28 @@
+{% import "ui.njk" as ui with context %}
+
+{% set onArticle = bodyClass == "page-article" %}
+
+<header class="topbar" data-topbar>
+  <div class="wrap topbar-inner">
+    <a class="site-id" href="/">
+      <img class="site-mark" src="{{ site.mark }}" alt="">
+      <span class="site-text">
+        <span class="site-name">{{ site.name }}</span>
+        <span class="site-sub">{{ site.institution }} · {{ site.domain }}</span>
+      </span>
+    </a>
+
+    {% if onArticle %}<span class="topbar-title">{{ title }}</span>{% endif %}
+
+    <div class="topbar-actions">
+      {{ ui.avatarStack(collections.people | byOrder, site.stackSize) }}
+      <button class="btn btn-solid" type="button" aria-pressed="false"
+              data-toggle data-label-on="Subscribed"
+              aria-label="Subscribe to {{ site.domain }} by email">
+        {{ ui.mailIcon() }}<span class="btn-label">Subscribe</span>
+      </button>
+    </div>
+  </div>
+
+  {% if onArticle %}<div class="topbar-progress" data-progress></div>{% endif %}
+</header>

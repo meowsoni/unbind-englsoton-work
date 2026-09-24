@@ -1,0 +1,51 @@
+---
+layout: layouts/base.njk
+bodyClass: page-article
+---
+{% import "ui.njk" as ui with context %}
+
+<main class="wrap article-grid">
+  <article class="article">
+    <header class="article-head" data-article-head>
+      <h1 class="article-title">{{ title }}</h1>
+      <p class="article-meta">
+        <time class="meta" datetime="{{ page.date | isoDate }}">{{ page.date | readableDate }}</time>
+        <span class="meta">on {{ site.domain }}</span>
+      </p>
+
+      {% for id in authors %}
+        {% set person = collections.people | findBy("id", id) %}
+        {% if person %}
+          <div class="article-author">
+            {{ ui.avatar(person, 44) }}
+            <span class="article-author-text">
+              <a class="article-author-name" href="/people/{{ person.data.slug }}/">{{ person.data.name }}</a>
+              <span class="article-author-role">{{ person.data.title }}</span>
+              <span class="article-author-id">{{ person.data.id }}</span>
+            </span>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% for slug in targetObjects %}
+        {% set object = collections.objects | findBy("slug", slug) %}
+        {% if object %}{{ ui.objectCard(object) }}{% endif %}
+      {% endfor %}
+    </header>
+
+    <div class="prose">
+      {{ content | safe }}
+    </div>
+  </article>
+
+  <div class="rail">
+    {% for slug in targetProjects %}
+      {% set project = collections.projects | findBy("slug", slug) %}
+      {% if project %}{{ ui.projectRail(project) }}{% endif %}
+    {% endfor %}
+    {% for id in authors %}
+      {% set person = collections.people | findBy("id", id) %}
+      {% if person %}{{ ui.personRail(person) }}{% endif %}
+    {% endfor %}
+  </div>
+</main>

@@ -1,0 +1,15 @@
+---
+layout: layouts/base.njk
+bodyClass: page-home
+eleventyExcludeFromCollections: true
+---
+{% import "ui.njk" as ui with context %}
+
+<main class="wrap home">
+  <h1 class="visually-hidden">{{ site.name }}, {{ site.institution }}</h1>
+  <div class="post-grid">
+    {% for post in collections.posts %}
+      {% if post.data.postType == "announcement" %}{{ ui.announcementCard(post) }}{% else %}{{ ui.postCard(post) }}{% endif %}
+    {% endfor %}
+  </div>
+</main>

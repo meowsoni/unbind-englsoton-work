@@ -1,0 +1,17 @@
+{
+  "name": "unbind-englsoton-work",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "englsoton.work",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve",
+    "clean": "rm -rf _site"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-footnote": "^4.0.0"
+  }
+}

@@ -1,0 +1,61 @@
+---
+layout: layouts/base.njk
+bodyClass: page-project
+---
+{% import "ui.njk" as ui with context %}
+
+{% set leadPerson = collections.people | findBy("id", lead) %}
+{% set posts = collections.posts | filterBy("targetProjects", slug) %}
+{% set outputs = collections.objects | filterBy("targetProjects", slug) %}
+
+<main class="wrap rail-grid">
+  <div>
+    <header class="band-card accent-{{ accent }} project-head">
+      <div>
+        <div class="project-ident">
+          <img class="project-thumb" src="{{ thumb }}" alt="" loading="lazy">
+          <span class="project-name">{{ name }}</span>
+        </div>
+        {% if leadPerson %}
+          <div class="project-lead">
+            {{ ui.avatar(leadPerson, 30) }}
+            <a class="ul" href="/people/{{ leadPerson.data.slug }}/">{{ leadPerson.data.name }}</a>
+          </div>
+        {% endif %}
+      </div>
+      {% if summary %}<p class="project-summary">{{ summary }}</p>{% endif %}
+    </header>
+
+    <div class="project-columns">
+      <section>
+        <p class="label">Posts ({{ posts.length }})</p>
+        <div class="post-list">
+          {% for post in posts %}{{ ui.postCard(post, true) }}{% endfor %}
+        </div>
+      </section>
+
+      <section>
+        <p class="label">Outputs ({{ outputs.length }})</p>
+        <ol class="output-list">
+          {% for output in outputs %}
+            <li class="output">
+              <span class="output-index">{{ loop.index }}</span>
+              <span>
+                <span class="output-title">{{ output.data.title }}</span>
+                <span class="output-imprint meta">
+                  {{- output.data.kindLabel }}{% if output.data.publisher %} · {{ output.data.publisher }}{% endif %}{% if output.data.year %} · {{ output.data.year }}{% endif %}
+                </span>
+              </span>
+            </li>
+          {% endfor %}
+        </ol>
+      </section>
+    </div>
+
+    {% if content %}<div class="prose project-prose">{{ content | safe }}</div>{% endif %}
+  </div>
+
+  <div class="rail">
+    {{ ui.elsewhereRail(leadPerson) }}
+  </div>
+</main>

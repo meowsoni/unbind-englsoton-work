@@ -1,0 +1,182 @@
+{# Icons #}
+
+{% macro mailIcon() %}
+  <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+    <rect x="1.6" y="3.4" width="12.8" height="9.2" rx="1.6"/>
+    <path d="M2.2 4.6 8 8.9l5.8-4.3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+{% endmacro %}
+
+{% macro plusIcon() %}
+  <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+    <path d="M8 3.4v9.2M3.4 8h9.2" stroke-linecap="round"/>
+  </svg>
+{% endmacro %}
+
+{% macro followButton(person) %}
+  <button class="btn" type="button" aria-pressed="false"
+          data-toggle data-label-on="Following"
+          aria-label="Follow {{ person.data.name }} at {{ person.data.id }}">
+    {{ plusIcon() }}<span class="btn-label">Follow</span>
+  </button>
+{% endmacro %}
+
+{# Avatars #}
+
+{% macro avatar(person, size = 32) %}
+  {% if person %}
+    <span class="ava-wrap">
+      <a class="ava" href="/people/{{ person.data.slug }}/" style="--ava-size: {{ size }}px">
+        <img src="{{ person.data.avatar }}" alt="{{ person.data.name }}" loading="lazy">
+      </a>
+      {{ hovercard(person) }}
+    </span>
+  {% endif %}
+{% endmacro %}
+
+{% macro hovercard(person) %}
+  <span class="hovercard" role="tooltip">
+    <span class="hovercard-head">
+      <img class="hovercard-ava" src="{{ person.data.avatar }}" alt="">
+      <span class="hovercard-names">
+        <span class="hovercard-name">{{ person.data.name }}</span>
+        <span class="hovercard-role">{{ person.data.title }}</span>
+      </span>
+    </span>
+    <span class="hovercard-bio">{{ person.data.shortBio }}</span>
+    {% if person.data.associatedProjects.length %}
+      <span class="hovercard-projects">
+        {% for slug in person.data.associatedProjects %}
+          {% set project = collections.projects | findBy("slug", slug) %}
+          {% if project %}<span class="hovercard-project">{{ project.data.name }}</span>{% endif %}
+        {% endfor %}
+      </span>
+    {% endif %}
+    <span class="hovercard-foot">
+      <span class="hovercard-id">{{ person.data.id }}</span>
+      {{ followButton(person) }}
+    </span>
+  </span>
+{% endmacro %}
+
+{# Reversed to match the right-to-left stack in CSS. #}
+{% macro avatarStack(people, shown = 6) %}
+  <div class="ava-stack">
+    <span class="ava-faces">
+      {% for person in people | limit(shown) | reverse %}{{ avatar(person, 42) }}{% endfor %}
+    </span>
+    {% if people.length > shown %}
+      <span class="ava-more">+{{ people.length - shown }}</span>
+    {% endif %}
+  </div>
+{% endmacro %}
+
+{# Posts #}
+
+{% macro postThumb(post) %}
+  {% if post.data.cover %}
+    <a class="thumb" href="{{ post.url }}" tabindex="-1" aria-hidden="true">
+      <img src="{{ post.data.cover }}" alt="" loading="lazy">
+    </a>
+  {% endif %}
+{% endmacro %}
+
+{% macro byline(post) %}
+  <p class="post-meta">
+    <time class="meta" datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time>
+    {%- if post.data.authors.length %}
+      <span class="post-byline meta">by
+        {%- for id in post.data.authors -%}
+          {%- set person = collections.people | findBy("id", id) -%}
+          {%- if person %} <a class="ul" href="/people/{{ person.data.slug }}/">{{ person.data.name }}</a>{%- if not loop.last %},{% endif %}{% endif %}
+        {%- endfor %}
+      </span>
+    {%- endif %}
+  </p>
+{% endmacro %}
+
+{% macro postCard(post, compact = false) %}
+  <article class="post-card{{ " post-card--sm" if compact }}">
+    {{ postThumb(post) }}
+    <div>
+      <h2 class="post-card-title"><a href="{{ post.url }}">{{ post.data.title }}</a></h2>
+      {{ byline(post) }}
+    </div>
+  </article>
+{% endmacro %}
+
+{% macro announcementCard(post) %}
+  <article class="announcement">
+    <h2 class="visually-hidden">{{ post.data.title }}</h2>
+    <a class="announcement-link" href="{{ post.url }}">
+      <span class="announcement-cover"><img src="{{ post.data.cover }}" alt="" loading="lazy"></span>
+      <span class="announcement-text">{{ post.data.blurb }}</span>
+    </a>
+  </article>
+{% endmacro %}
+
+{# Objects #}
+
+{% macro objectCard(object) %}
+  <figure class="object">
+    {% if object.data.cover %}
+      <img class="object-cover" src="{{ object.data.cover }}" alt="" loading="lazy">
+    {% endif %}
+    <figcaption class="object-meta">
+      <span class="meta">{{ object.data.kindLabel }}</span>
+      <span class="object-title">{{ object.data.title }}</span>
+      {% if object.data.subtitle %}<span class="object-sub">{{ object.data.subtitle }}</span>{% endif %}
+      {% if object.data.creator %}<span class="object-sub">{{ object.data.creator }}</span>{% endif %}
+      {% if object.data.publisher or object.data.year %}
+        <span class="object-imprint meta">{{ object.data.publisher }}{% if object.data.publisher and object.data.year %} · {% endif %}{{ object.data.year }}</span>
+      {% endif %}
+    </figcaption>
+  </figure>
+{% endmacro %}
+
+{# Rails #}
+
+{% macro projectRail(project) %}
+  <aside class="rail-card accent-mint">
+    <p class="label">Part of project</p>
+    <a class="rail-project" href="{{ project.url }}">
+      <img class="rail-thumb" src="{{ project.data.thumb }}" alt="" loading="lazy">
+      <span class="rail-project-name">{{ project.data.name }}</span>
+    </a>
+  </aside>
+{% endmacro %}
+
+{% macro personRail(person) %}
+  <aside class="rail-card accent-pink">
+    <a class="rail-person" href="/people/{{ person.data.slug }}/">
+      <img class="rail-ava" src="{{ person.data.avatar }}" alt="" loading="lazy">
+      <span class="rail-person-name">{{ person.data.name }}</span>
+    </a>
+    <p class="rail-person-role">{{ person.data.title }}</p>
+    <p class="rail-bio">{{ person.data.shortBio }}</p>
+    <p class="rail-foot">{{ followButton(person) }}</p>
+  </aside>
+{% endmacro %}
+
+{% macro elsewhereRail(person) %}
+  {% if person.data.alsoContributesTo.length %}
+    <aside class="rail-card accent-pink">
+      <div class="rail-person">
+        <img class="rail-ava" src="{{ person.data.avatar }}" alt="" loading="lazy">
+        <span class="rail-person-names">
+          <span class="rail-person-name">{{ person.data.name }}</span>
+          <span class="rail-handle">{{ person.data.id }}</span>
+        </span>
+      </div>
+      <p class="label rail-elsewhere-label">is also a contributor to</p>
+      <ul class="rail-sites">
+        {% for entry in person.data.alsoContributesTo %}
+          <li>
+            <a class="ul" href="https://{{ entry.site }}">{{ entry.site }}</a>
+            <span class="muted">({{ entry.count }})</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </aside>
+  {% endif %}
+{% endmacro %}

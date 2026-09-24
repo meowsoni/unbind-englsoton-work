@@ -1,0 +1,65 @@
+---
+layout: layouts/base.njk
+bodyClass: page-person
+---
+{% import "ui.njk" as ui with context %}
+
+{% set person = collections.people | findBy("id", id) %}
+{% set authored = collections.posts | filterBy("authors", id) %}
+{% set featuredPosts = authored | filterBy("featured", true) %}
+
+<main class="wrap rail-grid">
+  <div>
+    <header class="band-card accent-stone person-head">
+      <div class="person-ident">
+        <img class="person-ava" src="{{ avatar }}" alt="{{ name }}">
+        <span>
+          <span class="person-name">{{ name }}</span>
+          <span class="person-role">{{ title }}</span>
+          <span class="person-role muted">{{ affiliation }}</span>
+        </span>
+      </div>
+      <p class="person-bio">{{ bio }}</p>
+      <p class="person-actions">
+        {{ ui.followButton(person) }}
+        <span class="meta">{{ id }}</span>
+      </p>
+    </header>
+
+    {% if associatedProjects.length %}
+      <section class="section">
+        <p class="label">Project streams ({{ associatedProjects.length }})</p>
+        <div class="stream-grid">
+          {% for slug in associatedProjects %}
+            {% set project = collections.projects | findBy("slug", slug) %}
+            {% if project %}
+              {% set count = (collections.posts | filterBy("targetProjects", slug)).length %}
+              <a class="stream-card accent-{{ project.data.accent }}" href="{{ project.url }}">
+                <img class="stream-thumb" src="{{ project.data.thumb }}" alt="" loading="lazy">
+                <span>
+                  <span class="stream-name">{{ project.data.name }}</span>
+                  <span class="stream-count meta">{{ count }} post{{ "s" if count != 1 }}</span>
+                </span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if featuredPosts.length %}
+      <section class="section">
+        <p class="label">Featured posts ({{ featuredPosts.length }})</p>
+        <div class="post-grid">
+          {% for post in featuredPosts %}{{ ui.postCard(post, true) }}{% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if content %}<div class="prose person-prose">{{ content | safe }}</div>{% endif %}
+  </div>
+
+  <div class="rail">
+    {{ ui.elsewhereRail(collections.people | findBy("id", id)) }}
+  </div>
+</main>
