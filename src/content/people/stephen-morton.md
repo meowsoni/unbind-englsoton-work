@@ -1,6 +1,6 @@
 ---
 name: Stephen Morton
-title: Professor of Anglophone Literatures
+title: Professor of Postcolonial Literatures
 affiliation: University of Southampton
 id: stephen.morton@englsoton.work
 avatar: /assets/img/people/stephen-morton.jpg
