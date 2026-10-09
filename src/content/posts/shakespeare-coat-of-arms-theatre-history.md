@@ -1,5 +1,5 @@
 ---
-title: "What Can Shakespeare’s Coat of Arms Teach Us About Theatre History?"
+title: "What can Shakespeare’s Coat of Arms teach us about Theatre History?"
 date: 2026-09-30
 cover: /assets/img/covers/smith-herald.jpg
 author:
